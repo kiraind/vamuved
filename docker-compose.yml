@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+    api:
+        container_name: vamuved-api
+        build: .
+        restart: always
+        ports:
+            - "8081:3000"
+        env_file:
+            - .env
