@@ -4,7 +4,7 @@ import { MikroORM } from '@mikro-orm/core'
 
 import entities, { Channel, Receiver } from './entities/index'
 
-import TelegramManager from './services/TelegramManager'
+import TelegramService from './services/TelegramService'
 
 (async () => {
   // Database setup
@@ -18,7 +18,7 @@ import TelegramManager from './services/TelegramManager'
   const deliveryManagers: DeliveryManager[] = []
 
   if (process.env.TELEGRAM_TOKEN !== undefined) {
-    deliveryManagers.push(new TelegramManager(process.env.TELEGRAM_TOKEN))
+    deliveryManagers.push(new TelegramService(process.env.TELEGRAM_TOKEN))
   }
 
   // Delivery managers tuning

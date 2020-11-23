@@ -4,7 +4,7 @@ import DeliveryService from '../types/DeliveryService'
 import DeliveryManager from './DeliveryManager'
 import ChatbotState from '../types/ChatbotState'
 
-export default class TelegramManager extends DeliveryManager {
+export default class TelegramService extends DeliveryManager {
   bot: TelegramBot
   state: Record<number, ChatbotState> = {}
 
