@@ -1,10 +1,11 @@
-import express from 'express'
-import DeliveryManager from './services/DeliveryManager'
 import { MikroORM } from '@mikro-orm/core'
 
 import entities, { Channel, Receiver } from './entities/index'
 
+import DeliveryManager from './services/DeliveryManager'
 import TelegramService from './services/TelegramService'
+
+import WebService from './services/WebService'
 
 (async () => {
   // Database setup
@@ -62,14 +63,22 @@ import TelegramService from './services/TelegramService'
   // Delivery managers starting
   deliveryManagers.forEach(mg => mg.start())
 
-  const app = express()
-  const port = parseInt(process.env.PORT ?? '3000')
+  // Web service
+  const webService = new WebService()
 
-  app.get('/', (req, res) => {
-    res.send('Nothing here')
+  webService.setSendNotificationHandler(async (channelId, text) => {
+    const channel = await em.findOne(
+      Channel,
+      { id: channelId },
+      ['receiver']
+    )
+
+    if (channel === null) {
+      throw new Error('Invalid channel')
+    }
+
+    deliveryManagers.forEach(mg => mg.sendNotification(channel, text))
   })
 
-  app.listen(port, () => {
-    console.log(`VamUved listening at http://localhost:${port}`)
-  })
+  webService.start()
 })()

@@ -24,4 +24,5 @@ export default abstract class DeliveryManager {
   }
 
   abstract start(): void
+  abstract sendNotification(channel: Channel, text?: string): Promise<void>
 }

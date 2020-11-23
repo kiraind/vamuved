@@ -3,6 +3,7 @@ import DeliveryService from '../types/DeliveryService'
 
 import DeliveryManager from './DeliveryManager'
 import ChatbotState from '../types/ChatbotState'
+import { Channel } from '../entities'
 
 export default class TelegramService extends DeliveryManager {
   bot: TelegramBot
@@ -33,7 +34,7 @@ export default class TelegramService extends DeliveryManager {
 
           this.state[chatId] = ChatbotState.IDLE
           await this.bot.sendMessage(chatId, `ID нового канала «${channel.title}»:`)
-          this.bot.sendMessage(chatId, channel.id)
+          this.bot.sendMessage(chatId, '`' + channel.id + '`', { parse_mode: 'Markdown' })
         } else {
           this.bot.sendMessage(chatId, 'Неизвестная команда. Если есть какие-то вопросы, то @kiraind.')
         }
@@ -41,5 +42,18 @@ export default class TelegramService extends DeliveryManager {
         this.bot.sendMessage(chatId, 'Пишите текстом, пожалуйста.')
       }
     })
+  }
+
+  async sendNotification (channel: Channel, text?: string) {
+    if (channel.receiver.deliveryService !== DeliveryService.TELEGRAM) {
+      return
+    }
+
+    this.bot.sendMessage(
+      parseInt(channel.receiver.targetId),
+      text === undefined
+        ? `Уведомление по каналу «${channel.title}»`
+        : `Уведомление по каналу «${channel.title}»:\n\n${text}`
+    )
   }
 }
