@@ -1,28 +1,39 @@
 import express from 'express'
-import { MikroORM } from '@mikro-orm/core'
+import DeliveryManager from './services/DeliveryManager'
+// import { MikroORM } from '@mikro-orm/core'
 
-import entities, { Channel, Receiver } from './entities/index'
-import DeliveryService from './types/DeliveryService'
+// import entities, { Channel, Receiver } from './entities/index'
+// import DeliveryService from './types/DeliveryService'
+
+import TelegramManager from './services/TelegramManager'
 
 (async () => {
-  const orm = await MikroORM.init({
-    entities,
-    type: 'mongo',
-    clientUrl: process.env.MONGO_URL
-  })
+  const deliveryManagers: DeliveryManager[] = []
 
-  const user = new Receiver(DeliveryService.TELEGRAM, '123')
-  orm.em.persist(user)
+  if (process.env.TELEGRAM_TOKEN !== undefined) {
+    deliveryManagers.push(new TelegramManager(process.env.TELEGRAM_TOKEN))
+  }
 
-  const channel = new Channel('Hello, World', user)
-  orm.em.persist(channel)
-  user.channels.add(channel)
+  deliveryManagers.forEach(mg => mg.start())
 
-  await orm.em.flush()
+  // const orm = await MikroORM.init({
+  //   entities,
+  //   type: 'mongo',
+  //   clientUrl: process.env.MONGO_URL
+  // })
 
-  console.log(
-    channel.id
-  )
+  // const user = new Receiver(DeliveryService.TELEGRAM, '123')
+  // orm.em.persist(user)
+
+  // const channel = new Channel('Hello, World', user)
+  // orm.em.persist(channel)
+  // user.channels.add(channel)
+
+  // await orm.em.flush()
+
+  // console.log(
+  //   channel.id
+  // )
 
   const app = express()
   const port = parseInt(process.env.PORT ?? '3000')
