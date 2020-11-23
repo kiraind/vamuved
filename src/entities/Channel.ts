@@ -1,23 +1,24 @@
 import {
   Entity,
-  PrimaryKey,
   Property,
-  SerializedPrimaryKey
+  ManyToOne
 } from '@mikro-orm/core'
-import { ObjectId } from '@mikro-orm/mongodb'
+
+import BaseEntity from './BaseEntity'
+import Receiver from './Receiver'
 
 @Entity()
-export default class Channel {
-  @PrimaryKey()
-  _id!: ObjectId;
-
-  @SerializedPrimaryKey()
-  id!: string;
-
+export default class Channel extends BaseEntity {
   @Property()
-  title: string;
+  title: string
 
-  constructor (title: string) {
+  @ManyToOne()
+  receiver: Receiver
+
+  constructor (title: string, receiver: Receiver) {
+    super()
+
     this.title = title
+    this.receiver = receiver
   }
 }

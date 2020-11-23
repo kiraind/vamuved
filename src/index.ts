@@ -1,8 +1,8 @@
 import express from 'express'
 import { MikroORM } from '@mikro-orm/core'
 
-import entities from './entities/index'
-import Channel from './entities/Channel'
+import entities, { Channel, Receiver } from './entities/index'
+import DeliveryService from './types/DeliveryService'
 
 (async () => {
   const orm = await MikroORM.init({
@@ -11,14 +11,18 @@ import Channel from './entities/Channel'
     clientUrl: process.env.MONGO_URL
   })
 
-  // const channel = new Channel('hello world')
-  // orm.em.persist(channel)
+  const user = new Receiver(DeliveryService.TELEGRAM, '123')
+  orm.em.persist(user)
 
-  // await orm.em.flush()
+  const channel = new Channel('Hello, World', user)
+  orm.em.persist(channel)
+  user.channels.add(channel)
 
-  // console.log(
-  //   channel.id
-  // )
+  await orm.em.flush()
+
+  console.log(
+    channel.id
+  )
 
   const app = express()
   const port = parseInt(process.env.PORT ?? '3000')

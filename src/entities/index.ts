@@ -1,8 +1,14 @@
+import BaseEntity from './BaseEntity'
+import Receiver from './Receiver'
 import Channel from './Channel'
 
 export default [
-  Channel
+  BaseEntity,
+  Channel,
+  Receiver
 ]
 export {
-  Channel
+  BaseEntity,
+  Channel,
+  Receiver
 }
